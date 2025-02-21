@@ -63,3 +63,76 @@ const tshirts = [
     quantity: 1
   }
 ]
+
+const TshirtStore = () => {
+  const [items, setItems] = React.useState(tshirts);
+
+  const handleBuy = (index, quantity) => {
+    setItems((prevItems) =>
+      prevItems.map((item, i) =>
+        i === index ? { ...item, stock: item.stock - quantity } : item
+      )
+    );
+  };
+
+  return (
+    <div>
+      <h1>T-Shirt Store</h1>
+      <div className="store-container">
+        {items.map((tshirt, index) => (
+          <Tshirt
+            key={index}
+            tshirt={tshirt}
+            index={index}
+            handleBuy={handleBuy}
+            setItems={setItems}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Tshirt = (props) => {
+  const onClickHandler = () => {
+    props.handleBuy(props.index, props.tshirt.quantity);
+  };
+  return (
+    <div className="tshirt-card">
+      <img src={`images/${props.tshirt.image}`} alt={props.tshirt.title} />
+      <h3>{props.tshirt.title}</h3>
+      <p className="price-tag">$ {props.tshirt.price}</p>
+
+      {props.tshirt.stock > 0 ? (
+        <React.Fragment>
+          <p>{props.tshirt.stock} left!</p>
+          <div className="select-container">
+            <select
+              value={props.tshirt.quantity}
+              onChange={(e) => {
+                const newQuantity = Number(e.target.value);
+                setItems((prevItems) =>
+                  prevItems.map((item, i) =>
+                    i === index ? { ...item, quantity: newQuantity } : item
+                  )
+                );
+              }}
+            >
+              {[...Array(props.tshirt.stock).keys()].map((num) => (
+                <option key={num + 1} value={num + 1}>
+                  {num + 1}
+                </option>
+              ))}
+            </select>
+            <button onClick={onClickHandler}>Buy</button>
+          </div>
+        </React.Fragment>
+      ) : (
+        <p className="out-of-stock">Out of Stock</p>
+      )}
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<TshirtStore />);
+
